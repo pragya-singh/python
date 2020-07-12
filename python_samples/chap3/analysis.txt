@@ -1,0 +1,304 @@
+------cust_mob_cust_id_ars_api_rest------ => Problemetic
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/customer_id/1033896/customer_name/Cisco Systems Inc./ars/secure_flag/false/system_state/active/product_type/filer/system_state/active/product_type/filer
+http://reststg.corp.netapp.com/asup-rest-interface/ASUP_DATA/client_id/myasup/customer_id/1033896/ars/secure_flag/false/system_state/active/product_type/filer/system_state/active/product_type/filer
+http://reststg.corp.netapp.com/asup-rest-interface/ASUP_DATA/client_id/myasup/site_id/2365654/ars/secure_flag/false/system_state/active/product_type/filer/system_state/active/product_type/filer
+
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/customer_id/1033896/sys_list
+
+[CUSTOMER_ID, ARS, SECURE_FLAG, SYSTEM_STATE, PRODUCT_TYPE, SYSTEM_STATE, PRODUCT_TYPE]
+
+
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/system_id/0536990681/cluster_identifier/98024369-cc2c-11e5-8679-00a0989ee357/cse_list/sys_type/*/secure_flag/false/system_state/active/product_type/filer
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=solr_system_key%2Csystem_id%2Csys_serial_no%2Ccustomer_id%2Cgroup_code%2Csite_id%2Ccluster_identifier%2Cbiz_key%2Casup_gen_date%2Casup_gen_zone&q=%2Bsystem_id%3A0536990681+%2Bcluster_identifier%3A98024369%5C-cc2c%5C-11e5%5C-8679%5C-00a0989ee357+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=solr_system_key&group.limit=1&start=0&rows=75000
+
+=> Solr query 
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=solr_system_key%2Csystem_id%2Csys_serial_no%2Ccustomer_id%2Cgroup_code%2Csite_id%2Ccluster_identifier%2Cbiz_key%2Casup_gen_date%2Casup_gen_zone&q=%2Bcustomer_id%3A1033896+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_id&group.limit=1&start=0&rows=75000
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=solr_system_key%2Csystem_id%2Csys_serial_no%2Ccustomer_id%2Cgroup_code%2Csite_id%2Ccluster_identifier%2Cbiz_key%2Casup_gen_date%2Casup_gen_zone&q=%2Bcustomer_id%3A1033896+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&start=0&rows=75000
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=solr_system_key%2Csystem_id%2Csys_serial_no%2Ccustomer_id%2Cgroup_code%2Csite_id%2Ccluster_identifier%2Cbiz_key%2Casup_gen_date%2Casup_gen_zone&q=%2Bcustomer_id%3A1033896+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_id&group.limit=1&start=0&rows=75000
+
+
+=> Average takes 25sec
+Table connection and Scanner creation time=1
+Iteration through scanned results=107523
+customer_id=1033896
+searchType=ARS
+searchLevel=CUSTOMER
+
+scan 'ASUP_CALCULATIONS_SNAPSHOTS', {COLUMNS => ['LATEST:SYSTEM_MOVED', 'LATEST:SECURE_FLAG', 'LATEST:SYSTEM_STATE', 'LATEST:PRODUCT_TYPE', 'LATEST:PARTNERS','LATEST:FITNESS', 'LATEST:FITNESS_META', 'LATEST:SYSTEM_ID', 'LATEST:SYS_SERIAL_NO'], STARTROW => '0001033896', ENDROW => '0001033896~'}
+
+scan 'ASUP_CALCULATIONS_SNAPSHOTS', {COLUMNS => ['LATEST:SYSTEM_MOVED', 'LATEST:SECURE_FLAG', 'LATEST:SYSTEM_STATE', 'LATEST:PRODUCT_TYPE', 'LATEST:PARTNERS','LATEST:FITNESS', 'LATEST:FITNESS_META', 'LATEST:SYSTEM_ID', 'LATEST:SYS_SERIAL_NO'], STARTROW => '00010338960002365654', ENDROW => '00010338960002365654~'}
+
+scan 'ASUP_CALCULATIONS_SNAPSHOTS', {COLUMNS => ['LATEST:SYSTEM_MOVED', 'LATEST:SECURE_FLAG', 'LATEST:SYSTEM_STATE', 'LATEST:PRODUCT_TYPE', 'LATEST:PARTNERS', 'LATEST:FITNESS_META', 'LATEST:SYSTEM_ID', 'LATEST:SYS_SERIAL_NO'], STARTROW => '0001033896', ENDROW => '0001033896~'}
+
+setCache(100)
+
+
+
+
+Flow =>
+ContrllerFilter.handleRequest -> 
+	HandShakeController.handleRequest -> 
+		HandShakeController.executeRequest -> 
+			ExecutionService.execute -> all new REST apis
+				DataFacadeImpl.populateResponse(future thread) ->
+					DataServiceFactory.getDataService => internally versionMap is identified.
+														Like EnterpriseSnapShotService a new service class needs to be created with @Component tag
+														ads-appconfig.xml should have the entry in servicesMapping
+					PathAttribute
+					(Super Class)EnterpriseBaseService.execute -> SolrQuery 
+					 EnterpriseSnapshotService.execute -> 
+						EnterpriseSnapshotServiceHelper.writeResponse -> HBase Scan
+
+
+APIVersionsService 0/1
+			versionsMap.put("1", "system_summary,api_version,object_list,latest_asup,ars,eos,count,count_group,status,cse,cse_list,cct,log_list,list,add_client,asup_view,section_data,section_view,asup_download,perfect_data_api,cluster_details,counter_objects_list,ars_trend,eos_trend,enterprise_trending,burt_detail,object_conf,job_view,sys_list");
+DataService
+		OLD => SYSTEM_LIST_BY_CUSTOMER_ID("system_list_by_customer_id",51,"mobSystemListService",WriterType.JSON,"sys_list")
+		NEW => SYSTEM_LIST_SERVICE("system_list_service",51,"mobSystemListService",WriterType.JSON,"sys_list");
+
+com/netapp/asup/ads/data-service-meta-data.csv
+	OLD => 
+		system_list_by_customer_id|sys_list||||true|false|false|false|-1|EOL
+		system_list_by_customer_id|customer_id|customer_id||string|true|true|false|false|1|EOL
+		system_list_by_customer_id|site_id|site_id||string|true|true|false|false|2|EOL
+
+	NEW => 
+		system_list_service|sys_list||||true|false|false|false|-1|EOL
+		system_list_service|customer_id|customer_id||string|true|true|false|false|1|EOL
+		system_list_service|site_id|site_id||string|true|true|false|false|2|EOL
+
+Service Class:
+	@Component
+	SystemListService
+	@Component
+	SystemListServiceHelper
+
+SolrQuery:
+	OLD=>
+		SYSTEM_LIST_FOR_CUSTOMER(SYSTEM_LIST_BY_CUSTOMER_ID, QueryUtil.getSystemFieldsFromSystem(), SYSTEM_LIST_BY_CUSTOMER_ID
+			.getOrderedSearchAttrs(), null, null, null, null);
+
+	NEW=>		
+		SYSTEM_LIST_BY_CUSTOMER(SYSTEM_LIST_SERVICE, QueryUtil.getSystemFieldsFromSystem(), SYSTEM_LIST_SERVICE
+			.getOrderedSearchAttrs(), null, null, null, null);
+
+QueryUtil:
+		public static List<String> getSystemFieldsFromSystem() {
+		 List<String> sFieldNames = new ArrayList<String>();
+		 sFieldNames.add(Fields.SYS_SERIAL_NO.getFieldName());	
+		 sFieldNames.add(Fields.SYSTEM_ID.getFieldName());	
+		 return sFieldNames;
+	}
+
+PathAttribute
+	SYS_LIST("sys_list", null),
+
+ads-appconfig.xml should have the entry in servicesMapping
+			<entry key="systemListService" value-ref="systemListService" />
+
+ANALYSIS:
+1. customer_id, site_id, group_code and partialBizKey(can we have by site /group_code for mobile app)
+=> Proof: When site_id as rest request => 2 requests took more than 300s, for customer_id => 85 requests took more than 300 seconds
+Run for customer_id 1033896=> 
+Table connection and Scanner creation time=1
+Iteration through scanned results=107523
+Run for site_id 2365654 =>
+Table connection and Scanner creation time=0
+Iteration through scanned results=2052
+2. 90 days of of ARS scan in HBase, can it be reduced
+3. Calculation to read LATEST:FITNESS avro content for each row, converting to JSON and then converting is heavy calculation
+4. Not returning the whole LATEST:FITNESS content in the scan result(this will make response too heavy) 
+5. Need to check HBase performance while doing such kind of concurrent Requests
+
+
+-------cust_mob_cust_id_eos_api_rest------- => Problematic
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/customer_id/1033896/eos/secure_flag/false/system_state/active/product_type/filer/system_state/active/product_type/filer
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=solr_system_key%2Csystem_id%2Csys_serial_no%2Ccustomer_id%2Cgroup_code%2Csite_id%2Ccluster_identifier%2Cbiz_key%2Casup_gen_date%2Casup_gen_zone&q=%2Bcustomer_id%3A1033896+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_id&group.limit=1&start=0&rows=75000
+
+Flow =>
+ContrllerFilter.handleRequest -> 
+	HandShakeController.handleRequest -> 
+		HandShakeController.executeRequest -> 
+			ExecutionService.execute -> all new REST apis
+				DataFacadeImpl.populateResponse(future thread) ->
+					EnterpriseBaseService.execute -> SolrQuery 
+					EnterpriseSnapshotService.execute -> 
+						EnterpriseSnapshotServiceHelper.writeResponse -> HBase Scan
+
+
+Average takes 25sec
+Table connection and Scanner creation time=0
+Iteration through scanned results=49897
+customerId=1033896
+searchType=EOS
+searchLevel=CUSTOMER
+scan 'ASUP_CALCULATIONS_SNAPSHOTS', {COLUMNS => ['LATEST:SYSTEM_MOVED', 'LATEST:SECURE_FLAG', 'LATEST:SYSTEM_STATE', 'LATEST:PRODUCT_TYPE', 'LATEST:PARTNERS','LATEST:EOS', 'LATEST:EOS_META', 'LATEST:SYSTEM_ID', 'LATEST:SYS_SERIAL_NO'], STARTROW => '0001033896', ENDROW => '0001033896~'}
+scan 'ASUP_CALCULATIONS_SNAPSHOTS', {COLUMNS => ['LATEST:SYSTEM_MOVED', 'LATEST:SECURE_FLAG', 'LATEST:SYSTEM_STATE', 'LATEST:PRODUCT_TYPE', 'LATEST:PARTNERS','LATEST:EOS', 'LATEST:EOS_META', 'LATEST:SYSTEM_ID', 'LATEST:SYS_SERIAL_NO'], STARTROW => '00010338960002203725', ENDROW => '00010338960002203725~'}
+
+ANALYSIS:
+1. customer_id, site_id, group_code and partialBizKey(can we have by site /group_code for mobile app)
+Run for customer_id 1033896=> 
+Table connection and Scanner creation time=0
+Iteration through scanned results=49897
+Run for site_id 2365654 =>
+Table connection and Scanner creation time=0
+Iteration through scanned results=2052
+2. 90 days of of EOS scan in HBase, can it be reduced
+3. Calculation to read LATEST:EOS avro content for each row, converting to JSON and then converting is heavy calculation
+4. Not returning the whole LATEST:EOS content in the scan result(this will make response too heavy) 
+5. Need to check HBase performance while doing such kind of concurrent Requests
+
+
+------cust_mob_cust_name_count_api_rest------ => Problematic
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/customer_name/microsoft%20co*/count/secure_flag/false/system_state/active/product_type/filer 
+Flow =>
+ContrllerFilter.handleRequest -> 
+	HandShakeController.handleRequest -> 
+		HandShakeController.executeRequest -> 
+			ExecutionService.execute -> all new REST apis
+				DataFacadeImpl.populateResponse(future thread) ->
+					CountSiteService.execute(request,response) ->
+						CountService.execute(request,response)
+
+
+Query for date range 90 (ads.properties => ads.enterprise.search.default_date_limit=90) for a customer_name
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bcustomer_name%3Amicrosoft%5C+co*+%2Basup_gen_date%3A%5B2016%5C-12%5C-21T00%5C%3A00%5C%3A00Z+TO+2017%5C-03%5C-21T23%5C%3A59%5C%3A59.999Z%5D+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=risk_count&stats.field=eos_count&stats.field=best_practices_count&stats.field=perf_risk_count&stats.facet=customer_site_id&stats.facet=customer_id
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bcustomer_name%3Amicrosoft%5C+co*+%2Basup_gen_date%3A%5B2016%5C-12%5C-21T00%5C%3A00%5C%3A00Z+TO+2017%5C-03%5C-21T23%5C%3A59%5C%3A59.999Z%5D+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=risk_count&stats.field=eos_count&stats.field=best_practices_count&stats.field=perf_risk_count&stats.facet=customer_site_id&stats.facet=customer_id	
+
+Query without date range 90 
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bcustomer_name%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=rlm_enabled_count&stats.field=sys_contact_count&stats.field=asup_disabled_count&stats.field=asup_enabled_count&stats.facet=customer_site_id&stats.facet=customer_id
+
+Query group by customer_site_id
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_group_code%2Csite_id%2Ccustomer_site_id%2Ccustomer_name%2Ccustomer_group%2Csite_name%2Csys_site_country&q=%2Bcustomer_name%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_site_id&group.limit=1&start=0&rows=75000	
+
+
+This service should not have any problem
+START OF COUNT SERVICE
+COUNT SERVICE SOLR QUERIES TIME=4500
+COUNT SERVICE CALCULATIONS AFTER SOLR QUERY RESPONSE=31
+
+
+-------sys_mob_group_name_count_grp_api_rest------
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/group_name/microsoft%20co*/count_group/secure_flag/false/system_state/active/product_type/filer 
+
+Flow =>
+ContrllerFilter.handleRequest -> 
+	HandShakeController.handleRequest -> 
+		HandShakeController.executeRequest -> 
+			ExecutionService.execute -> all new REST apis
+				DataFacadeImpl.populateResponse(future thread) ->
+					CountGroupService.execute(request,response) ->
+						CountService.execute(request,response)
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bcustomer_group%3Amicrosoft%5C+co*+%2Basup_gen_date%3A%5B2016%5C-12%5C-15T00%5C%3A00%5C%3A00Z+TO+2017%5C-03%5C-15T23%5C%3A59%5C%3A59.999Z%5D+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=risk_count&stats.field=eos_count&stats.field=best_practices_count&stats.field=perf_risk_count&stats.facet=customer_group_code&stats.facet=customer_id
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bcustomer_group%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=rlm_enabled_count&stats.field=sys_contact_count&stats.field=asup_disabled_count&stats.field=asup_enabled_count&stats.facet=customer_group_code&stats.facet=customer_id
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_group_code%2Csite_id%2Ccustomer_site_id%2Ccustomer_name%2Ccustomer_group%2Csite_name%2Csys_site_country&q=%2Bcustomer_group%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_group_code&group.limit=1&start=0&rows=75000
+
+
+START OF COUNT SERVICE
+COUNT SERVICE SOLR QUERIES TIME=2548
+COUNT SERVICE CALCULATIONS AFTER SOLR QUERY RESPONSE=15
+
+
+
+
+------sys_mob_site_name_count_api_rest-----
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/myasup/site_name/microsoft%20co*/count/secure_flag/false/system_state/active/product_type/filer
+
+Flow =>
+ContrllerFilter.handleRequest -> 
+	HandShakeController.handleRequest -> 
+		HandShakeController.executeRequest -> 
+			ExecutionService.execute -> all new REST apis
+				DataFacadeImpl.populateResponse(future thread) ->
+					CountSiteService.execute(request,response) ->
+						CountService.execute(request,response)
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bsite_name%3Amicrosoft%5C+co*+%2Basup_gen_date%3A%5B2016%5C-12%5C-15T00%5C%3A00%5C%3A00Z+TO+2017%5C-03%5C-15T23%5C%3A59%5C%3A59.999Z%5D+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=risk_count&stats.field=eos_count&stats.field=best_practices_count&stats.field=perf_risk_count&stats.facet=customer_site_id&stats.facet=customer_id
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id&q=%2Bsite_name%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&stats=true&stats.field=rlm_enabled_count&stats.field=sys_contact_count&stats.field=asup_disabled_count&stats.field=asup_enabled_count&stats.facet=customer_site_id&stats.facet=customer_id
+
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_group_code%2Csite_id%2Ccustomer_site_id%2Ccustomer_name%2Ccustomer_group%2Csite_name%2Csys_site_country&q=%2Bsite_name%3Amicrosoft%5C+co*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_site_id&group.limit=1&start=0&rows=75000
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_group_code%2Csite_id%2Ccustomer_site_id%2Ccustomer_name%2Ccustomer_group%2Csite_name%2Csys_site_country&q=%2Bsite_name%3Anetapp*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_site_id&group.limit=1&start=0&rows=100
+
+http://durahc105s1-stg.corp.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_name&q=%2Bcustomer_name%3Anetapp*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_id&group.limit=100&start=0&rows=100
+
+http://rtpwil-dse-qa01.rtp.openenglab.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=customer_id%2Ccustomer_name&q=%2Bcustomer_name%3Anetapp*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=customer_id&group.limit=10000&start=0&rows=10000
+
+http://rtpwil-dse-qa01.rtp.openenglab.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=system_id%2Csys_serial_no&q=%2Bsystem_id%3A10*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&group=true&group.field=system_id&group.limit=100&start=0&rows=100
+
+http://rtpwil-dse-qa01.rtp.openenglab.netapp.com:8983/solr/R2B3_SYSTEM.SYSTEM/select?fl=system_id%2Csys_serial_no&q=%2Bsystem_id%3A10*+%2Bsystem_state%3Aactive+%2Bproduct_type%3Afiler+%2Bsecure_flag%3Afalse&start=0&rows=100
+
+=> customer_name, site_name and cluster_name search, 
+	Search should be on the basis of name field
+	grouping should be on corresponding ids with group.limit=1 and max rows=75000
+=> system_id, sys_serial_no and riskSystemListService 
+	No grouping, 
+	pagination required. 
+
+h1, s1, ssn1
+h1, s1, ssn1
+
+
+START OF COUNT SERVICE
+COUNT SERVICE SOLR QUERIES TIME=3332
+COUNT SERVICE CALCULATIONS AFTER SOLR QUERY RESPONSE=3
+
+
+
+--------ORACLE DB Performance Impact------
+RestCommonDaoImpl -> Counter Load releated. its status
+ObjectMetaDaoImpl -> AsupMeta , meta model related
+RestPathController -> 
+	restPathService = RestPathExtractorDaoImpl -> Extracting REST PATH Extractor 
+RestTrackingDaoImpl -> For inserting CLIENT_ID
+
+
+
+
+ControllerFilter.handleRequest(HttpServletRequest, HttpServletResponse) 	
+	HandShakeController.handleRequest(HttpServletRequest, HttpServletResponse) 	
+		HandShakeController.executeRequest(ADSResponse, RequestContext, String)	
+			AuthenticationService.authenticate(String) 
+				ClientInfoService =>
+ 					hadoop fs -text /ads/metadata/clientInfo
+ 					NFS Path => ads.clientInfo.nfs.path=/willows/stage/asup/grissom/asupdw/clientInfo/clientInfo
+
+
+http://localhost:8080/asup-rest-interface/ASUP_DATA/client_id/nishantp/system_id/2014114234/sys_serial_no/940000025030/object/system/counter_name/cifs_ops/raw/cvc
+http://reststg.corp.netapp.com/asup-rest-interface/ASUP_DATA/client_id/nishantp/system_id/0536875497/sys_serial_no/701413000484/object/system/counter_name/cifs_ops/raw/cvc
+
+ControllerFilter.handleRequest(HttpServletRequest, HttpServletResponse)
+	RestPathController.handleRequest
+		RestTrackingService.authenticateClient => DB Call ()
+			RestTrackingDao.getRestClientInfoMetaData => 
+				It will get all clients which are ACTIVE:
+					select CLIENT_ID, CLIENT_EMAIL_ID, CLIENT_DESCRIPTION, STATUS_ID, CLIENT_CATEGORY from REST_CLIENT_INFO where STATUS_ID IN (select STATUS_ID from REST_CLIENT_STATUS where STATUS_NAME = 'Active');
+				Otherwiase client_id is invalid
+		RestPathService.getRestPathMetaData
+			select attribute_id, real_name, column_name, alternate_names , has_value  ,data_type ,OPERATOR_ID from REST_PATH_ATTR_MAPPING
+		RestPathService.getRestResourceInfoMetadata
+			select RESOURCE_NAME, RESOURCE_ID, RESOURCE_DESCRIPTION, RESOURCE_IDENTIFIER_ATTRIBUTE from REST_RESOURCE_INFO
+
+			
+			restPathExtractorDao.getRestCommonDaoCall
+				select rest_commn_rsrc_dao_call_id,resource_id,resource_commn_id,dao_call_name,BUSINESS_VAL_CLASS_NAM from rest_commn_rsrc_dao_call where resource_id= :resourceId
+
+				com.netapp.willows.rest.validator.CounterViewValidator
+				com.netapp.willows.rest.service.CounterApi
+
