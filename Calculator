@@ -1,0 +1,17 @@
+print('Welcome to Calculator')
+first_no=int(input('enter first number : '))
+second_no=int(input('enter second number : '))
+print('press 1 for ADDITION!!!!!')
+print('press 2 for SUBTRACTION!!!!!')
+print('press 3 for MULTIPLICATION!!!!!')
+print('press 4 for DIVISION!!!!!')
+num=int(input('What Operation you want to do!!!!'))
+match(num):
+  case 1:
+    print('Sum of first_no & second_no = ',first_no+second_no)
+  case 2:
+    print('Substraction of first_no & second_no = ',first_no-second_no)
+  case 3:
+    print('Multiplication of first_no & second_no = ',first_no*second_no)
+  case 4:
+    print('Division of first_no & second_no = ',first_no/second_no)
