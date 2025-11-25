@@ -1,0 +1,12 @@
+year_input=int(input('enter the year : '))
+month_input=int(input('enter the month : '))
+if month_input==2:
+  if year_input%4==0:
+    print('29 days')
+  else:
+    print('28 days')
+else:
+  if month_input in [4,6,9,11]:
+    print('30 days')
+  else:
+    print('31 days')
