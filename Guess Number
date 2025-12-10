@@ -1,0 +1,17 @@
+import random
+a=int(input('enter the value of a : '))
+b=int(input('enter the value of b : '))
+random_num=random.randint(a,b)
+print(random_num)
+print('Guess the Num Between ',a,'  & ',b)
+first_no=int(input('enter first guess : '))
+second_no=int(input('enter second guess : '))
+third_no=int(input('enter third guess : '))
+if first_no==random_num:
+  print('first guess is correct')
+elif second_no==random_num:
+  print('second guess is correct')
+elif(third_no==random_num):
+  print('third guess is correct')
+else:
+  print('all guesses are wrong')
